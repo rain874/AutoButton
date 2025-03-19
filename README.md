@@ -5,9 +5,9 @@
 
 ### current function 
   currently there is only one function for all buttons 
-  '''python 
-  def simulate_keystrokes
-  '''
+  ```python 
+  def simuliere_tastatureingaben(self, betreff, beschreibung):
+  ```
   the function can be customized the individual function assignment for each button is planned. 
 
 Translated with DeepL.com (free version)
