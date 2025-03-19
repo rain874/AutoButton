@@ -10,4 +10,3 @@
   ```
   the function can be customized the individual function assignment for each button is planned. 
 
-Translated with DeepL.com (free version)
