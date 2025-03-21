@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
 import tkinter as tk
 import configparser
+
 import pyautogui
 import time
+import keyboard
 
-class AntragsformularApp:
+
+class AutoButtonApp:
     def __init__(self, master, config_datei):
         self.master = master
         self.master.title("AutoButton - by Rainer Schmitz")
@@ -13,7 +17,8 @@ class AntragsformularApp:
 
     def lade_konfiguration(self, dateipfad):
         config = configparser.ConfigParser()
-        config.read(dateipfad)
+        with open(dateipfad, "r", encoding="utf-8") as datei:
+            config.read_file(datei)
         return config
 
     def erzeuge_widgets(self):
@@ -29,7 +34,8 @@ class AntragsformularApp:
             self.master,
             text="Immer im Vordergrund",
             variable=self.var_topmost,
-            command=self.toggle_topmost
+            command=self.toggle_topmost,
+            font=("Arial", 10)
         )
         self.check_topmost.grid(row=0, column=0, padx=button_padx, pady=button_pady, sticky='w')
 
@@ -41,10 +47,11 @@ class AntragsformularApp:
             if not enabled:
                 continue  # Button wird nicht erstellt, wenn enabled False ist
 
-            text = self.config.get(section, 'text', fallback='Button')
+            text = self.config.get(section, 'text',fallback='Button')
             color = self.config.get(section, 'color', fallback='white')
             betreff = self.config.get(section, 'betreff', fallback='')
             beschreibung = self.config.get(section, 'beschreibung', fallback='')
+
 
             def button_callback(b=betreff, bs=beschreibung):
                 self.simuliere_tastatureingaben(b, bs)
@@ -56,10 +63,10 @@ class AntragsformularApp:
                 command=button_callback
             )
 
+
             # Berechne die aktuelle Zeile und Spalte basierend auf dem Index
             current_row = (index % buttons_pro_spalte) + 1  # +1 wegen der Checkbox in Zeile 0
             current_column = index // buttons_pro_spalte
-            
 
             button.grid(
                 row=current_row,
@@ -70,7 +77,6 @@ class AntragsformularApp:
                 ipadx=button_ipadx,
                 ipady=button_ipady
             )
-
 
     def toggle_topmost(self):
         self.master.attributes('-topmost', self.var_topmost.get())
@@ -83,11 +89,14 @@ class AntragsformularApp:
             pyautogui.press('tab')
 
         # Betreff einfügen
-        pyautogui.typewrite(betreff)
+        keyboard.write(betreff)
 
         # 6-mal Tab
         for _ in range(6):
             pyautogui.press('tab')
+
+        # Richtung auf "eingehende" setzen
+        pyautogui.typewrite('eingehende')
 
         # 2-mal Pfeiltaste hoch
         for _ in range(2):
@@ -100,8 +109,8 @@ class AntragsformularApp:
         for _ in range(2):
             pyautogui.press('tab')
 
-        # Beschreibung einfügen
-        pyautogui.typewrite(beschreibung)
+        # Schreiben des Textes
+        keyboard.write(beschreibung)
 
     def passe_fenster_an(self):
         # Erzwinge, dass alle Widget-Größen berechnet werden
@@ -112,7 +121,9 @@ class AntragsformularApp:
         # Setze die Fenstergröße basierend auf den abgerufenen Werten
         self.master.geometry(f"{breite}x{hoehe}")
 
+
 if __name__ == "__main__":
     root = tk.Tk()
-    app = AntragsformularApp(root, 'konfiguration.ini')
+    app = AutoButtonApp(root, 'konfiguration.ini')
     root.mainloop()
+
